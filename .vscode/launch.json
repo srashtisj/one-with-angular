@@ -2,53 +2,49 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Docker: Attach to Node",
+      "name": "Debug SST",
       "type": "node",
-      "request": "attach",
-      "port": 9229,
-      "address": "localhost",
-      "restart": true,
-      "sourceMaps": false,
-      "localRoot": "${workspaceRoot}/src/server",
-      "remoteRoot": "."
-    },
-    {
-      "name": "Launch Chrome",
-      "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:4200/",
-      "sourceMaps": true,
-      "webRoot": "${workspaceRoot}",
-      "trace": true,
-      "sourceMapPathOverrides": {
-        "webpack:///./*": "${webRoot}/*"
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/sst",
+      "runtimeArgs": ["dev", "--increase-timeout"],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      // sourceMapRenames helps with the loading spinner when debugging and viewing local variables
+      "sourceMapRenames": false,
+      "env": {
+        "AWS_PROFILE": "flo-ct-flo360"
       }
     },
     {
-      "name": "Attach to Chrome",
-      "type": "chrome",
-      "request": "attach",
-      "port": 9222,
-      "sourceMaps": true,
-      "trace": true,
-      "webRoot": "${workspaceRoot}",
-      "url": "http://localhost:4200/*",
-      "sourceMapPathOverrides": {
-        "webpack:///./*": "${webRoot}/*"
-      }
+      "name": "Debug Tests - Unit",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/sst",
+      "runtimeArgs": ["bind", "yarn", "\"jest\"", "\"--watch\"", "\"--config\"", "\"./jest.unit.config.cjs\"", "\"${input:scopeTestsFileName}\""],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "AWS_PROFILE": "flo-ct-flo360"
+      },
     },
     {
-      "name": "Attach to Chrome Test",
-      "type": "chrome",
-      "request": "attach",
-      "port": 9222,
-      "sourceMaps": true,
-      "trace": true,
-      "webRoot": "${workspaceRoot}",
-      "url": "http://localhost:9876/*",
-      "sourceMapPathOverrides": {
-        "webpack:///./*": "${webRoot}/*"
-      }
+      "name": "Debug Tests - E2E",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/sst",
+      "runtimeArgs": ["bind", "yarn", "\"vitest\"", "\"--config\"", "\"./vitest.e2e.config.ts\"", "\"${input:scopeTestsFileName}\""],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "AWS_PROFILE": "flo-ct-flo360"
+      },
+    },
+  ],
+  "inputs": [
+    {
+      "id": "scopeTestsFileName",
+      "type": "promptString",
+      "description": "Partial file name to scope test debugging to. ex. arena. Leave blank to run all tests.",
     }
   ]
 }
